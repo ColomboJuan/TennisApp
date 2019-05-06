@@ -14,7 +14,7 @@ class GuardRoute extends React.Component {
         } = this.context;
 
         if (type === 'private' && !isLoggedIn) {
-            return <Redirect to="/" />;
+            return <Redirect to="/login" />;
         } else if (type === 'public' && isLoggedIn) {
             return <Redirect to="/App" />;
         }

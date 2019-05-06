@@ -4,13 +4,19 @@ import StudentForm from './StudentForm';
 import StudentList from './studentList';
 import { Link } from 'react-router-dom'
 import { AuthContext } from '../../context/auth';
+import Layout from '../../components/layout'
+import {StudentContext} from '../../context/students'
+import Student from '../student/index'
 
 
 
 
 class Crud extends React.Component {
   
-
+  
+  state={
+    studentId:null
+  }
   
   handleLogout(){
     console.log('anda')
@@ -20,33 +26,66 @@ class Crud extends React.Component {
   }
 
   render() {
-    return (
-    <div className="Crud">
-      <div className="navbar navbar-ligth bg-primary">
-      
-        <Link className="text-white" to="/App">Tennis App  </Link>
-        <div >
-        <Link  className="text-white mr-sm-3"  to="/App">{this.context.user && this.context.user.name}</Link>
-       
-        </div>
-      </div>
-      <div className="container">
-         <div className="col-md-6 m-5 ">
-             <StudentForm/>
-            
 
-           </div>
-           <div id="Students-list" className="col-md-12 mx-auto m-3">
-           <StudentList/>
-          </div> 
-       
-      </div>
+    
 
-    </div>
+    const{
+      students,
+    }=this.context
+
+    const {
+      studentId
+    } = this.state; 
+  
+     const student = students.find(n => n.id === studentId);
+  
+      return (
+            <Layout>
+              <div className="container">
+              
+                 <div className="card" >     
+                    <table class="table table-striped">
+                      <thead className="thead-light">
+                        <tr>
+                          <th scope="col">Name</th>
+                          <th scope="col">Age</th>
+                          <th scope="col">Group</th>
+                          <th scope="col">Gender</th>
+                          <th scope="col">Mail</th>
+                          <th scope="col">Adress</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {students.map(row =>{
+                          return(
+                            <tr
+                            key={row.id}
+                            onClick={() => this.setState({ studentId: row.id})}
+                            >
+                              <td>{row.name}</td>
+                              <td>{row.age}</td>
+                              <td>{row.group}</td>
+                              <td>{row.gender}</td>
+                              <td>{row.email}</td>
+                              <td>{row.adress}</td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>   
+                     </table>
+                 </div>     
+              </div>
+              {studentId &&
+              <Student
+              student={student}
+              onClose={()=> this.setState({studentId:null})}
+              />
+              }
+            </Layout>
     );
   }
 }
 
-Crud.contextType =AuthContext;
+Crud.contextType =StudentContext;
 
 export default Crud;

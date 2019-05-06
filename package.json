@@ -5,10 +5,13 @@
   "dependencies": {
     "firebase": "^5.10.0",
     "firebaseui": "^3.6.0",
+    "formik": "^1.5.4",
+    "moment": "^2.24.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-router-dom": "^5.0.0",
-    "react-scripts": "2.1.8"
+    "react-scripts": "2.1.8",
+    "yup": "^0.27.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -24,5 +27,8 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "node-sass": "^4.12.0"
+  }
 }

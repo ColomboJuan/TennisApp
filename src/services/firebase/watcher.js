@@ -24,7 +24,7 @@ export function watchUserChanges(callback) {
 
 export function watchStudents(callback) {
     const unsub = db
-        .collection('expenses')
+        .collection('students')
         .onSnapshot((snapshot) => {
             const docs = [];
 

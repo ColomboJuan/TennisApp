@@ -4,16 +4,14 @@ export const StudentContext =React.createContext()
 
 export class StudentContextProvider extends React.Component{
     state = {
-       students:[
-
-       ]
+       students:[]
     }
 
     componentDidMount(){
-        watchUserChanges((user)=>{
+        this.userWatcherUnsub = watchUserChanges((user)=>{
             if(user && !this.isSetup){
                 this.isSetup =true; 
-                watchStudents((students) =>{
+                this.expenseWatcherUnsub =  watchStudents((students) =>{
                     this.setState({students})
                 })
             }
@@ -21,12 +19,22 @@ export class StudentContextProvider extends React.Component{
 
         
     }
+
+    componentWillUnmount() {
+        if (this.expenseWatcherUnsub) {
+            this.expenseWatcherUnsub();
+        }
+    }
  
 
 render(){
+    const {
+        children,
+    } = this.props;
     return(
-        <StudentContext.Provider value={this.state}>
-          {this.props.children}
+        
+        <StudentContext.Provider value={{...this.state}}>
+          {children}
         </StudentContext.Provider>
     )
 }
