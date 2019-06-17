@@ -6,8 +6,9 @@ import styles from './style.module.scss';
 import Button from '../../components/button'
 import Select from '../../components/select'
 import FormControl from '../../components/formControl'
-import { createStudents,updateStudents,deleteStudents } from "../../services/firebase";
+import {createStudents,updateStudents,deleteStudents} from "../../services/firebase";
 import { StudentContext } from '../../context/students';
+import { GroupContext } from '../../context/groups';
 
 
 const formSchema = yup.object().shape({
@@ -20,41 +21,110 @@ const formSchema = yup.object().shape({
 })
 
 class Student extends React.Component {
+  state={
+    student: this.props.student,
+    showReload :false,
+    students:this.context,
+  }
+
+  componentWillReceiveProps(newProps) {
+    const {
+        student: oldStudent,
+    } = this.state;
+    const {
+        student: newStudent
+    } = newProps;
+
+    if(
+      newStudent && oldStudent &&(
+        newStudent.adress !== oldStudent.adress ||
+        newStudent.age !== oldStudent.age ||
+        newStudent.email !== oldStudent.email ||
+        newStudent.gender !== oldStudent.gender ||
+        newStudent.group !== oldStudent.group ||
+        newStudent.name !== oldStudent.name
+      )
+    ) {
+        this.setState({
+            student: newStudent,
+            showReload: true,
+        });
+    }
+}
   
-onSubmit = async (values, formikBag)=>{
+
+
+onSubmit = async (values, { setSubmitting }) => {
+  const {
+      student,
+  } = this.state;
+  const{
+    students
+  }=this.context
+
+  if (student) {
+    await updateStudents(student.id,values)
+  } else {
+    await createStudents(values)
+  }
+
+ 
+  
+  setSubmitting(false);
+  this.props.onClose();
+}
+
+
+
+
+onCancel = () =>{
+  
+  this.props.onClose()
+}
+
+onDelete = async()=>{
   const {
     student,
     onClose
   } = this.props
-  await updateStudents(student.id,values);
-
-  formikBag.setSubmitting(false)
+  await deleteStudents(student.id);
   onClose()
 
+
 }
-onCancel(){}
 
   render() {
-
     const{
-      student,
+      students,
+      groups
+    }=this.context
+    const{
       onClose
-    }=this.props  
+    }=this.props
+    const {
+      student,
+      showReload,
+  } = this.state;
+  const resource = student || {};
+  const groupsName=groups.map(row =>{
+    return{label: row.name,
+      value: row.name}})
       const node = (
            <div className={styles.modalContainer}>
              <div className={styles.modalBox}>
-              <h1 onClick={onClose}>Edit student</h1>
+              <h1 onClick={onClose}>{resource.id ? "Edit" : "Create" } student</h1>
               <Formik
                 initialValues={{
-                    name:'',
-                    age:'',
-                    group:'',
-                    gender:'',
-                    email:'',
-                    adress:''
+                    name:resource.name ||'',
+                    age:resource.age ||'',
+                    group:resource.group ||'',
+                    gender:resource.gender ||'',
+                    email:resource.email ||'',
+                    adress:resource.adress ||'',
+                    
                 }}
                 validationSchema={formSchema}
-                
+                onSubmit={this.onSubmit}
                 render={props=>{
                     const {
                         values,
@@ -62,6 +132,7 @@ onCancel(){}
                         handleBlur,
                         handleSubmit,
                         isSubmitting,
+                        handleReset,
                         isValid
                     }=props
                     return(
@@ -73,14 +144,14 @@ onCancel(){}
                   onBlur={handleBlur('name')}
                   placeholder="Name"
                   />
-                  <ErrorMessage name="name"/>
+                  <ErrorMessage  style={{ color: 'red' }} name="name"/>
                   <input type="number" className="form-control"
                   value={values.age}
                   onChange={handleChange('age')}
                   onBlur={handleBlur('age')}
                   placeholder="Age"
                   />
-                  <ErrorMessage name="age"/>
+                  <ErrorMessage  name="age"/>
                     <Select
 
               options={[{
@@ -122,20 +193,8 @@ onCancel(){}
                   />
               <ErrorMessage name="adress"/>
 
-                   <Select
-              options={[{
-                  label:'1',
-                  value:'1'
-              },
-              {
-                label:'2',
-                value:'2'
-            },
-            {
-                label:'3',
-                value:'3'
-            }
-        ]}
+              <Select
+              options={groupsName}
               value={values.group}
               onChange={handleChange('group')}
               onBlur={handleBlur('group')}
@@ -147,26 +206,46 @@ onCancel(){}
                  
               <FormControl type="block" >
               <Button 
-              
               type="primary"
               disabled={isSubmitting || !isValid}
               onClick={handleSubmit}
-              label='Submit'
+              label={resource.id ? 'Update'  : 'Create'}
               />
+                {resource.id &&
+              <Button 
+              type="danger"
+              onClick={this.onDelete}
+              label='Delete'
+              />
+            }
               <Button 
               type="warning"
+              
               onClick={this.onCancel}
               label='Cancel'
               />
               
-              </FormControl>
+            </FormControl>
               <FormControl type="row" >
             
               </FormControl>
+              {showReload &&
+              <FormControl>
+                <div>
+                  This resource has been update.
+                <Button 
+                type="link"
+                 onClick={() =>{
+                handleReset()
+                this.setState({showReload:false})
+              }}
+              label='Click here'
+              />to refresh
+                </div>
+              </FormControl>
+              }
               </React.Fragment> 
-                    )
-                    
-                }}
+                    )}}
               >
               
               </Formik>
@@ -178,6 +257,8 @@ onCancel(){}
   }
 }
 
+
 Student.contextType = StudentContext;
+Student.contextType = GroupContext;
 
 export default Student;

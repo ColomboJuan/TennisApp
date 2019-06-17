@@ -1,48 +1,41 @@
 import React  from 'react';
 import firebase from '../../services/firebase/setup'
-import StudentForm from './StudentForm';
-import StudentList from './studentList';
-import { Link } from 'react-router-dom'
-import { AuthContext } from '../../context/auth';
 import Layout from '../../components/layout'
 import {StudentContext} from '../../context/students'
 import Student from '../student/index'
-
-
+import styles from './style.module.scss';
 
 
 class Crud extends React.Component {
-  
-  
-  state={
-    studentId:null
+   state={
+    isOpen: false,
+    studentId:null,
+    
   }
   
-  handleLogout(){
-    console.log('anda')
-    firebase.auth().signOut()
-    .then(result=> console.log('Salio'))
-    .catch(error=>console.log(error))
-  }
+
 
   render() {
-
-    
-
-    const{
-      students,
-    }=this.context
+   const{students}=this.context
 
     const {
-      studentId
+      studentId,
+      isOpen
     } = this.state; 
   
      const student = students.find(n => n.id === studentId);
   
       return (
+        
             <Layout>
-              <div className="container">
+               <div className={styles.buttonFloat}
+               onClick={()=> this.setState({isOpen:true , studentId:null})}
+              >
+              +
+              </div>
               
+              <div className="container">
+             
                  <div className="card" >     
                     <table class="table table-striped">
                       <thead className="thead-light">
@@ -60,7 +53,7 @@ class Crud extends React.Component {
                           return(
                             <tr
                             key={row.id}
-                            onClick={() => this.setState({ studentId: row.id})}
+                            onClick={() => this.setState({ studentId: row.id,isOpen:true})}
                             >
                               <td>{row.name}</td>
                               <td>{row.age}</td>
@@ -75,16 +68,17 @@ class Crud extends React.Component {
                      </table>
                  </div>     
               </div>
-              {studentId &&
+              {isOpen &&
               <Student
               student={student}
-              onClose={()=> this.setState({studentId:null})}
+              onClose={()=> this.setState({isOpen:false})}
               />
               }
             </Layout>
     );
   }
 }
+
 
 Crud.contextType =StudentContext;
 

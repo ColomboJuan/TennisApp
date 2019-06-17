@@ -13,12 +13,7 @@ const Button = (props) =>{
       <div
       className={`btn btn-${type} p-10`}
       isDisabled={`${disabled}`}
-      onClick={(e)=>{
-          if(disabled){
-              return
-          }
-          onClick(e)
-      }}
+      onClick={e => !disabled && onClick(e)}
       >
       {label}
 
@@ -28,7 +23,7 @@ const Button = (props) =>{
 
 Button.defaultProps ={
 type:'primary',
-disabled:'false'
+
 } 
 
 export default Button;

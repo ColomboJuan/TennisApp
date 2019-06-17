@@ -30,16 +30,94 @@ export function watchStudents(callback) {
 
             snapshot.forEach((doc) => {
                 const data = doc.data();
-
                 docs.push({
                     ...data,
-                    amount: +data.amount,
-                    id: doc.id,
-                    date: data.date && new Date(data.date),
-                });
+                  id: doc.id,
+                 });
             });
 
             callback(docs);
+        });
+
+    return unsub;
+}
+
+export function watchGroups(callback) {
+    const unsub = db
+        .collection('groups')
+        .onSnapshot((snapshot) => {
+            const docs = [];
+
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+
+                docs.push({
+                    ...data,
+                  id: doc.id,
+                 });
+            });
+          callback(docs);
+        });
+
+    return unsub;
+}
+
+export function watchEvals(callback) {
+    const unsub = db
+        .collection('evaluations')
+        .onSnapshot((snapshot) => {
+            const docs = [];
+
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+
+                docs.push({
+                    ...data,
+                  id: doc.id,
+                 });
+            });
+          callback(docs);
+        });
+
+    return unsub;
+}
+
+export function watchCoaches(callback) {
+    const unsub = db
+        .collection('coaches')
+        .onSnapshot((snapshot) => {
+            const docs = [];
+
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+
+                docs.push({
+                    ...data,
+                  id: doc.id,
+                 });
+            });
+          callback(docs);
+        });
+
+    return unsub;
+    
+}
+
+export function watchMatches(callback) {
+    const unsub = db
+        .collection('matches')
+        .onSnapshot((snapshot) => {
+            const docs = [];
+
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+
+                docs.push({
+                    ...data,
+                  id: doc.id,
+                 });
+            });
+          callback(docs);
         });
 
     return unsub;

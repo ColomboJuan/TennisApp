@@ -11,7 +11,7 @@ export class StudentContextProvider extends React.Component{
         this.userWatcherUnsub = watchUserChanges((user)=>{
             if(user && !this.isSetup){
                 this.isSetup =true; 
-                this.expenseWatcherUnsub =  watchStudents((students) =>{
+                this.studentWatcherUnsub =  watchStudents((students) =>{
                     this.setState({students})
                 })
             }
@@ -21,8 +21,8 @@ export class StudentContextProvider extends React.Component{
     }
 
     componentWillUnmount() {
-        if (this.expenseWatcherUnsub) {
-            this.expenseWatcherUnsub();
+        if (this.studentWatcherUnsub) {
+            this.studentWatcherUnsub();
         }
     }
  
