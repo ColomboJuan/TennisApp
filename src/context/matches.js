@@ -1,18 +1,18 @@
 import React from 'react'
-import { watchEvals,watchUserChanges } from '../services/firebase'
-export const EvalContext =React.createContext()
+import { watchMatches,watchUserChanges } from '../services/firebase'
+export const MatchContext =React.createContext()
 
-export class EvalContextProvider extends React.Component{
+export class MatchContextProvider extends React.Component{
     state = {
-        evaluations:[]
+        matches:[]
     }
 
     componentDidMount(){
         this.userWatcherUnsub = watchUserChanges((user)=>{
             if(user && !this.isSetup){
                 this.isSetup =true; 
-                this.evalWatcherUnsub =  watchEvals((evaluations) =>{
-                     this.setState({evaluations})
+                this.MatchWatcherUnsub =  watchMatches((matches) =>{
+                     this.setState({matches})
                 })
             }
         })
@@ -21,8 +21,8 @@ export class EvalContextProvider extends React.Component{
     }
 
     componentWillUnmount() {
-        if (this.evalWatcherUnsub) {
-            this.evalWatcherUnsub();
+        if (this.matchWatcherUnsub) {
+            this.matchWatcherUnsub();
         }
     }
  
@@ -33,12 +33,12 @@ render(){
     } = this.props;
     return(
         
-        <EvalContext.Provider value={{...this.state}}>
+        <MatchContext.Provider value={{...this.state}}>
           
           {children}
-        </EvalContext.Provider>
+        </MatchContext.Provider>
     )
 }
 }
 
-export const EvalContextComsumer =EvalContext.Consumer;
+export const MatchContextComsumer =MatchContext.Consumer;

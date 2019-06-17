@@ -102,3 +102,24 @@ export async function updateEvals(id,data){
           .doc(id)
           .update(data)
   }
+
+  export async function createGroupsMatches(data){
+     return await db
+          .collection('groupsmatches')
+          .doc()
+          .set(data)
+  }
+ 
+ export async function deleteGroupsMatches(id){
+     return await db
+          .collection('groupsmatches')
+          .doc(id)
+          .delete()
+  }
+ 
+ export async function updateGroupsMatches(id,data){
+     return await db
+          .collection('groupsmatches')
+          .doc(id)
+          .update(data)
+  }
